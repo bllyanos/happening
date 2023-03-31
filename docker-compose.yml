@@ -1,0 +1,13 @@
+version: '3'
+
+volumes:
+  happening_pgdata:
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - happening_pgdata:/var/lib/postgresql/data

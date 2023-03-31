@@ -1,10 +1,11 @@
+mod auth;
+mod core;
+mod users;
+
 use std::net::SocketAddr;
 
 use axum::{routing::get, Json, Router};
 use serde_json::{json, Value};
-
-mod core;
-mod users;
 
 #[tokio::main]
 async fn main() {
