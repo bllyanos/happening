@@ -2,6 +2,7 @@ use sqlx::PgPool;
 
 use super::{error::UserServiceError, model::User};
 
+#[derive(Clone)]
 pub struct UserService {
     db: PgPool,
 }

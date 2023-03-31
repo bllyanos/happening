@@ -9,11 +9,20 @@ use serde_json::{json, Value};
 
 #[tokio::main]
 async fn main() {
-    let db = core::database::connect();
-    // .await
-    // .expect("cannot connect to database");
-    let router: Router = Router::new().route("/", get(handle_index));
+    println!("connecting to database..");
+    let db = core::database::connect()
+        .await
+        .expect("cannot connect to database");
+    println!("connected  to database..");
+
+    let auth_router = auth::router::create(db.clone());
+    let router: Router = Router::new()
+        .route("/", get(handle_index))
+        .merge(auth_router);
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    println!("RUNNING ON http://{}", addr);
+
     axum::Server::bind(&addr)
         .serve(router.into_make_service())
         .await

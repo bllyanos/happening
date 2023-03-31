@@ -5,17 +5,20 @@ use crate::users::service::UserService;
 use super::{
     error::AuthServiceError,
     model::{LoginInput, LoginResult},
+    tokenization::{jwt_secret, tokenize_user},
 };
 
+#[derive(Clone)]
 pub struct AuthService {
-    db: PgPool,
     user_service: UserService,
 }
 
 impl AuthService {
     pub fn new(db: PgPool) -> Self {
+        // required
+        jwt_secret();
+
         Self {
-            db: db.clone(),
             user_service: UserService::new(db),
         }
     }
@@ -30,8 +33,10 @@ impl AuthService {
             return Err(AuthServiceError::Unauthorized);
         }
 
+        let token = tokenize_user(jwt_secret(), &user);
+
         Ok(LoginResult {
-            token: todo!("token woi"),
+            token,
             username: String::from(&user.username),
         })
     }
