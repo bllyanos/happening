@@ -7,8 +7,8 @@ pub enum AuthServiceError {
     Unauthorized,
     InvalidToken,
     UnknownSqlx(sqlx::Error),
-    Unknown,
 }
+
 impl AuthServiceError {
     pub fn get_status_and_message(&self) -> (axum::http::StatusCode, String) {
         match &self {
@@ -21,9 +21,6 @@ impl AuthServiceError {
                     StatusCode::INTERNAL_SERVER_ERROR,
                     format!("unknown database error"),
                 )
-            }
-            AuthServiceError::Unknown => {
-                (StatusCode::INTERNAL_SERVER_ERROR, format!("unknown error"))
             }
         }
     }

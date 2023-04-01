@@ -1,10 +1,9 @@
 use axum::{response::IntoResponse, Json};
 use serde_json::json;
 
-use crate::{auth::error::AuthServiceError, users::error::UserServiceError};
+use crate::auth::error::AuthServiceError;
 
 pub enum AppError {
-    UserService(UserServiceError),
     AuthService(AuthServiceError),
 }
 
@@ -13,7 +12,6 @@ impl IntoResponse for AppError {
         use AppError::*;
 
         let (status, error_message) = match self {
-            UserService(inner) => inner.get_status_and_message(),
             AuthService(inner) => inner.get_status_and_message(),
         };
 
