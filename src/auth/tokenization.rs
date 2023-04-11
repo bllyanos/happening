@@ -9,7 +9,7 @@ use crate::{core::env_vars::env_var, users::model::User};
 use super::error::AuthServiceError;
 
 static mut JWT_SECRET: String = String::new();
-const JWT_EXP_SECS: u64 = 86400;
+const JWT_EXP_SECS: u64 = 86_400;
 
 pub fn jwt_secret() -> &'static str {
     unsafe {
@@ -56,6 +56,11 @@ fn get_expiration() -> u64 {
         .try_into()
         .unwrap();
     return now + JWT_EXP_SECS;
+}
+
+#[test]
+fn test_one_day_expiration() {
+    assert_eq!(JWT_EXP_SECS, 86_400);
 }
 
 fn get_reg_claims() -> RegisteredClaims {
