@@ -5,10 +5,9 @@ use sqlx::PgPool;
 
 use crate::core::error::AppError;
 
-use super::error::AuthServiceError;
+use super::bearer_token_header::extract;
 use super::model::{LoginInput, LoginResult};
 use super::service::AuthService;
-use super::tokenization::{jwt_secret, verify};
 
 pub fn create(db: PgPool) -> Router {
     let auth_service = AuthService::new(db);
@@ -19,28 +18,7 @@ pub fn create(db: PgPool) -> Router {
 }
 
 async fn handle_verify(headers: HeaderMap) -> Result<Json<LoginResult>, AppError> {
-    let auth_header = headers
-        .get("Authorization")
-        .ok_or_else(|| AuthServiceError::InvalidToken)?;
-
-    let auth_header_split: Vec<&str> = auth_header
-        .to_str()
-        .map_err(|_| AuthServiceError::InvalidToken)?
-        .split_whitespace()
-        .collect();
-
-    let &bearer_token = auth_header_split
-        .get(1)
-        .ok_or_else(|| AuthServiceError::InvalidToken)?;
-
-    let verify_result = verify(jwt_secret(), bearer_token)?;
-
-    let login_result = LoginResult {
-        username: verify_result,
-        token: String::from(bearer_token),
-    };
-
-    Ok(Json(login_result))
+    Ok(Json(extract(headers)?))
 }
 
 async fn handle_login(
