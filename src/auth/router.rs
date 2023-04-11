@@ -19,28 +19,28 @@ pub fn create(db: PgPool) -> Router {
 }
 
 async fn handle_verify(headers: HeaderMap) -> Result<Json<LoginResult>, AppError> {
-    let bearer_token = headers
+    let auth_header = headers
         .get("Authorization")
         .ok_or_else(|| AuthServiceError::InvalidToken)?;
 
-    let bearer_token: Vec<&str> = bearer_token
+    let auth_header_split: Vec<&str> = auth_header
         .to_str()
         .map_err(|_| AuthServiceError::InvalidToken)?
         .split_whitespace()
         .collect();
 
-    let &bearer_token = bearer_token
+    let &bearer_token = auth_header_split
         .get(1)
         .ok_or_else(|| AuthServiceError::InvalidToken)?;
 
-    let result = verify(jwt_secret(), bearer_token)?;
+    let verify_result = verify(jwt_secret(), bearer_token)?;
 
-    let result = LoginResult {
-        username: result,
+    let login_result = LoginResult {
+        username: verify_result,
         token: String::from(bearer_token),
     };
 
-    Ok(Json(result))
+    Ok(Json(login_result))
 }
 
 async fn handle_login(
