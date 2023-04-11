@@ -4,7 +4,7 @@ use hmac::{Hmac, Mac};
 use jwt::{Claims, RegisteredClaims, SignWithKey, VerifyWithKey};
 use sha2::Sha256;
 
-use crate::{core::env_var::env_var, users::model::User};
+use crate::{core::env_vars::env_var, users::model::User};
 
 use super::error::AuthServiceError;
 
