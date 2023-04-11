@@ -32,14 +32,20 @@ pub fn tokenize_user(key: &str, user: &User) -> String {
 
 pub fn verify(key: &str, token: &str) -> Result<String, AuthServiceError> {
     let key = create_hmac_key(key);
+
     let claims: Claims = token
         .verify_with_key(&key)
         .map_err(|_| AuthServiceError::InvalidToken)?;
-    claims
+
+    let username = claims
         .private
         .get("username")
         .ok_or_else(|| AuthServiceError::InvalidToken)
-        .map(|username| username.as_str().unwrap().to_owned())
+        .map(|username| username.as_str())?
+        .ok_or_else(|| AuthServiceError::InvalidToken)?
+        .to_owned();
+
+    Ok(username)
 }
 
 fn get_expiration() -> u64 {
