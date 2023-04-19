@@ -1,6 +1,7 @@
 mod auth;
 mod core;
 mod users;
+mod workspaces;
 
 use std::net::SocketAddr;
 

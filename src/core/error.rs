@@ -5,6 +5,7 @@ use crate::auth::error::AuthServiceError;
 
 pub enum AppError {
     AuthService(AuthServiceError),
+    WorkspaceService(WorkspaceServiceError),
 }
 
 impl IntoResponse for AppError {
